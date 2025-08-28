@@ -1,13 +1,13 @@
 const WeatherData = (() => {
   class Weather {
-    constructor(city, temp, info) {
-      this.city = {};
+    constructor(location, temp, info) {
+      this.location = {};
       this.temp = {};
       this.info = {};
     };
 
-    update(city, temp, info) {
-      this.city = city;
+    update(location, temp, info) {
+      this.location = location;
       this.temp = temp;
       this.info = info;
     }
@@ -18,8 +18,8 @@ const WeatherData = (() => {
       this.info = {};
     }
 
-    get getCity() {
-      return this.city;
+    get getLocation() {
+      return this.location;
     }
 
     get getTemp() {

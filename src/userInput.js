@@ -1,5 +1,6 @@
 import getWeatherData from "./weatherAPI";
 import { weather } from "./index.js";
+import { domController } from "./domHandler.js";
 
 const userInput = {
     searchButton: document.querySelector('#searchBtn'),
@@ -17,21 +18,23 @@ const userInput = {
 async function submitForm() {
   event.preventDefault();
   const data = await getWeatherData(userInput.getValue);
-  let address = getAddress(data);
+  console.log(data);
+  let location = getLocation(data);
   let temp = getTemp(data);
   let info = getInfo(data);
-  weather.update(address, temp, info);
-  console.log(weather.getCity);
+  weather.update(location, temp, info);
+  domController.load();
+  console.log(weather.getLocation);
   console.log(weather.getTemp);
   console.log(weather.getInfo);
 };
 
-function getAddress(data) {
-  let address = {
-    city: data.address,
+function getLocation(data) {
+  let location = {
+    city: checkLowerCase(data.resolvedAddress),
     timezone: data.timezone,
   }
-  return address;
+  return location;
 }
 
 function getTemp(data) {
@@ -50,6 +53,11 @@ function getInfo(data) {
     precipitation: data.currentConditions.precipprob
   }
   return info;
+}
+
+function checkLowerCase(input) {
+  let string = input.charAt(0).toUpperCase() + input.slice(1);
+  return string
 }
 
 
