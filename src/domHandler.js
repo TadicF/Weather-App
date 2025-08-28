@@ -3,6 +3,8 @@ import { weather } from "./index.js";
 
 export const domController = {
   uiLoaded: false,
+  hourlyReport: true,
+  weeklyReport: false,
   load: () => { loadUI()},
   display: () => { displayWeatherUI()},
   update: () => { updateWeatherUI()},
@@ -22,9 +24,11 @@ function loadUI() {
 function displayWeatherUI() {
   const weatherWrapper = document.querySelector('.weatherWrapper');
 
-  const weatherContainer = document.createElement('div');
-  weatherContainer.classList.add('weatherContainer');
+  const weatherContainer = createDiv('weatherContainer');
   weatherWrapper.appendChild(weatherContainer);
+
+  const timeDisplayContainer = createDiv('timeDisplayContainer');
+  weatherWrapper.appendChild(timeDisplayContainer);
 
   const locationContainer = createDiv('locationContainer')
   weatherContainer.appendChild(locationContainer);
@@ -34,11 +38,16 @@ function displayWeatherUI() {
   weatherContainer.appendChild(infoContainer);
   const timeReportDiv = createDiv('timeReportDiv');
   weatherContainer.appendChild(timeReportDiv);
+  const timeDisplay = createDiv('timeDisplay');
+  timeDisplayContainer.appendChild(timeDisplay);
 
   displayLocation();
   displayTemp();
   displayInfo();
   displayTimeReport();
+  displayHourlyReport();
+
+
 };
 
 function createDiv(type) {
@@ -126,6 +135,34 @@ function displayTimeReport() {
   selectTimeDiv.appendChild(hourlyBtn);
   selectTimeDiv.appendChild(weeklyBtn);
 }
+
+function displayHourlyReport() {
+  const timeDisplay = document.querySelector('.timeDisplay');
+  timeDisplay.classList.add('hourlyDisplay');
+
+  for(let i = 0; i < 24; i++) {
+    const hourlyDiv = createDiv('hourlyDiv');
+    timeDisplay.appendChild(hourlyDiv);
+
+    const hourlyTime = createDiv('hourlyTime');
+    const hourlyTemp = createDiv('hourlyTemp');
+    const hourlyCondition = createDiv('hourlyCondition');
+
+    hourlyTime.textContent = `${i}`;
+    hourlyTemp.textContent = `${i + 20}`;
+    hourlyCondition.textContent = `[icon]`;
+
+    hourlyDiv.appendChild(hourlyTime);
+    hourlyDiv.appendChild(hourlyTemp);
+    hourlyDiv.appendChild(hourlyCondition);
+  }
+}
+
+function displayWeeklyReport() {
+
+}
+
+// Utility Functions
 
 function checkCityLength() {
   const cityDiv = document.querySelector('.cityDiv');
