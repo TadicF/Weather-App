@@ -162,19 +162,19 @@ input {
   border-radius: 15px;
   box-shadow: 0 0 5px #d6eaff;
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1.4fr 1fr;
   grid-template-columns: 2fr 0.5fr 1fr 1fr;
 }
 
 .locationContainer {
   grid-column: 1 / 2;
-  grid-row: 1 / 4;
+  grid-row: 1 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border-bottom: 0.5px solid #ccc;
   border-right: 0.5px solid #ccc;
+  border-bottom: 0.5px solid #ccc;
 }
 
 .cityDiv > p {
@@ -192,6 +192,108 @@ input {
 .timezoneDiv p {
   font-family: 'Inter-Light';
   font-size: 1em;
+}
+
+.uvContainer {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+  border-right: 0.5px solid #ccc;
+  border-bottom: 0.5px solid #ccc;
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
+  align-items: center;
+}
+
+.uvIndexScale {
+  display: flex;
+  justify-self: center;
+  font-family: 'Inter-Regular';
+  gap: 10px;
+}
+
+.uvIndexScale > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.uvIndexText {
+  justify-self: center;
+}
+
+.uvIndexText p {
+  font-family: 'Inter-Medium';
+  font-size: 1.3em;
+}
+
+.uvIndexScale > div > div:first-child {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  font-size: 1.1em;
+  color: white;
+  }
+
+.activeUv {
+  font-family: 'Inter-Bold';
+  outline: 2px solid black;
+}
+
+.lowIndexNum div, .moderateIndexNum div, .highIndexNum div,
+.veryHighIndexNum div, .extremeIndexNum div {
+  display: flex;
+  justify-content: center;
+  padding: 5px 7px;
+}
+
+.lowIndexText, .moderateIndexText, .highIndexText
+, .veryHighIndexText, .extremeIndexText {
+  display: flex;
+  justify-content: center;
+  color: white;
+  padding: 5px 7px;
+}
+
+.lowIndexNum div {
+  background-color: rgb(67, 218, 67);
+}
+
+.lowIndexText {
+  background-color: rgb(67, 218, 67);
+}
+
+.moderateIndexText {
+  background-color: rgb(252, 212, 82);
+}
+
+.moderateIndexNum div {
+  background-color: rgb(252, 212, 82);
+}
+
+.highIndexNum div {
+  background-color: orange;
+}
+
+.highIndexText {
+  background-color: orange;
+}
+
+.veryHighIndexText {
+  background-color: rgb(253, 64, 64);
+}
+
+.veryHighIndexNum div {
+  background-color: rgb(253, 64, 64);
+}
+
+.extremeIndexNum div {
+  background-color: rgb(165, 25, 165);
+}
+
+.extremeIndexText {
+  background-color: rgb(165, 25, 165);
 }
 
 .tempContainer {
@@ -307,10 +409,6 @@ input {
   transition: all 0.15s ease;
 }
 
-.hourlyDisplay div:hover {
-  scale: 1.07;
-}
-
 .hourlyDisplay div p:first-child {
   font-family: 'Inter-Medium';
   font-size: 20px;
@@ -352,10 +450,6 @@ input {
   transition: all 0.15s ease;
   display: grid;
   grid-template-rows: 1fr 1fr 2fr;
-}
-
-.weeklyDisplay div:hover {
-  scale: 1.05;
 }
 
 .weekDay {

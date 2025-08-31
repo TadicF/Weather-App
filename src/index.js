@@ -1,4 +1,3 @@
-import "./styles.css";
 import weatherData from "./weatherData";
 import userInput from "./userInput";
 

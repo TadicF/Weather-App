@@ -50,7 +50,8 @@ function getInfo(data) {
   let info = {
     windSpeed: data.currentConditions.windspeed,
     humidity: data.currentConditions.humidity,
-    precipitation: data.currentConditions.precipprob
+    precipitation: data.currentConditions.precipprob,
+    uvIndex: data.currentConditions.uvindex,
   }
   return info;
 }
