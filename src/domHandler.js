@@ -1,10 +1,13 @@
 import { weather } from "./index.js";
+import { checkCityLength, createWrapper, createDiv, addPara, checkUvLevel, checkTimeDesignations, getWeekDay, getTemp } from "./utilityFunctions.js";
 import "./styles.css";
 
 export const domController = {
   uiLoaded: false,
   hourlyReport: true,
   weeklyReport: false,
+  timeDesignation: '',
+  temperatureUnit: 'F',
   load: () => { loadUI()},
   display: () => { displayWeatherUI()},
   update: () => { updateWeatherUI()},
@@ -41,6 +44,7 @@ function displayWeatherUI() {
   const timeReportDiv = createDiv('timeReportDiv');
   weatherContainer.appendChild(timeReportDiv);
   const timeDisplay = createDiv('timeDisplay');
+  timeDisplay.classList.add('hourlyDisplay');
   timeDisplayContainer.appendChild(timeDisplay);
 
   displayLocation();
@@ -49,6 +53,7 @@ function displayWeatherUI() {
   displayInfo();
   displayTimeReport();
   displayHourlyReport();
+  switchTimeDisplay();
 };
 
 function displayLocation() {
@@ -111,10 +116,8 @@ function displayUvIndexScale() {
       const parentDiv = document.querySelector('.extremeIndexNum').appendChild(div);
       div.textContent = `${i+1}+`;
     }
-
-    checkUvLevel();
   }
-
+  checkUvLevel();
   addPara('lowIndexText', 'Low');
   addPara('moderateIndexText', 'Moderate');
   addPara('highIndexText', 'High');
@@ -138,8 +141,11 @@ function displayTemp() {
   const condition = document.createElement('p');
   // ---------- add condition icon ------------
 
-  date.textContent = weather.temp.dateTime.slice(0, 5);
-  temp.textContent = weather.temp.currTemp;
+  checkTimeDesignations();
+  date.textContent = `${weather.temp.dateTime.slice(0, 5)} ${domController.timeDesignation}`;
+
+  temp.textContent = `${getTemp(weather.temp.currTemp)}°${domController.temperatureUnit}`;
+
   condition.textContent = weather.temp.condition;
   dateDiv.appendChild(date);
   tempDiv.appendChild(temp);
@@ -178,7 +184,9 @@ function displayTimeReport() {
   hourlyBtn.textContent = 'Hourly';
   weeklyBtn.textContent = 'Weekly';
   hourlyBtn.classList.add('activeTime');
+  hourlyBtn.classList.add('hourlyBtn');
   weeklyBtn.classList.add('inactiveTime');
+  weeklyBtn.classList.add('weeklyBtn');
 
   selectTimeDiv.appendChild(hourlyBtn);
   selectTimeDiv.appendChild(weeklyBtn);
@@ -186,7 +194,6 @@ function displayTimeReport() {
 
 function displayHourlyReport() {
   const timeDisplay = document.querySelector('.timeDisplay');
-  timeDisplay.classList.add('hourlyDisplay');
 
   for(let i = 0; i < 24; i++) {
     const hourlyDiv = createDiv('hourlyDiv');
@@ -196,8 +203,8 @@ function displayHourlyReport() {
     const hourlyTemp = createDiv('hourlyTemp');
     const hourlyCondition = createDiv('hourlyCondition');
 
-    hourlyTime.textContent = `${i}`;
-    hourlyTemp.textContent = `${i + 20}`;
+    hourlyTime.textContent = `${weather.hourly.hours[i].datetime.slice(0, 5)}`;
+    hourlyTemp.textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
     hourlyCondition.textContent = `[icon]`;
 
     hourlyDiv.appendChild(hourlyTime);
@@ -207,57 +214,94 @@ function displayHourlyReport() {
 }
 
 function displayWeeklyReport() {
+  const timeDisplay = document.querySelector('.timeDisplay');
 
-}
+  for(let i = 0; i < 7; i++) {
+    const weeklyDiv = createDiv('weeklyDiv');
+    timeDisplay.appendChild(weeklyDiv);
 
-// Utility Functions
+    const weekDay = createDiv(`weekDay${i}`);
+    weekDay.classList.add('weekDay');
+    const weekTemp = createDiv(`weekTemp${i}`);
+    weekTemp.classList.add('weekTemp');
+    const weekCondition = createDiv(`weekCondition${i}`);
+    weekCondition.classList.add('weekCondition');
 
-function checkCityLength() {
-  const cityDiv = document.querySelector('.cityDiv');
-  const city = cityDiv.children;
-  console.log(city);
-  if(weather.location.city.length > 12) {
-    city[0].classList.add('longText')
-  } else {
-    city[0].classList.add('shortText')
+    weeklyDiv.appendChild(weekDay);
+    weeklyDiv.appendChild(weekTemp);
+    weeklyDiv.appendChild(weekCondition);
+
+    const date = new Date(weather.weekly.weeks[i].datetime);
+    const day = date.getDay(); // returns a numeric value based on day of the week
+
+    addPara(`weekDay${i}`, getWeekDay(day));
+    addPara(`weekTemp${i}`, `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit}`);
+    addPara(`weekTemp${i}`, ' - ');
+    addPara(`weekTemp${i}`, `${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`);
+    addPara(`weekCondition${i}`, weather.weekly.weeks[i].icon);
   }
-};
-
-function createWrapper(mainDiv, firstDiv, secondDiv) {
-  const div = document.createElement('div');
-  div.classList.add(mainDiv);
-
-  const firstWrapper = document.createElement('div');
-  firstWrapper.classList.add(firstDiv);
-  div.appendChild(firstWrapper);
-
-  const secondWrapper = document.createElement('div');
-  secondWrapper.classList.add(secondDiv);
-  div.appendChild(secondWrapper);
-
-  return div;
-};
-
-function createDiv(type) {
-  const container = document.createElement('div');
-  container.classList.add(type);
-  return container;
-};
-
-function addPara(div, paraText) {
-  const myDiv = document.querySelector(`.${div}`);
-  const para = document.createElement('p');
-  para.textContent = paraText;
-  myDiv.appendChild(para);
 }
 
-function checkUvLevel() {
-  let uvLevel = weather.info.uvIndex;
-  if(uvLevel === 0) { uvLevel++ };
-  const index = document.querySelector(`.index${uvLevel}`);
-  index.classList.add('activeUv');
- }
+function switchTimeDisplay() {
+  const timeDisplay = document.querySelector(".timeDisplay");
+  const hourlyBtn = document.querySelector('.hourlyBtn');
+  const weeklyBtn = document.querySelector('.weeklyBtn');
 
+  hourlyBtn.addEventListener('click', () => {
+    if(!domController.hourlyReport === true) {
+      timeDisplay.replaceChildren('');
+      domController.hourlyReport = true;
+      domController.weeklyReport = false;
+      displayHourlyReport();
+      timeDisplay.classList.add('hourlyDisplay');
+      timeDisplay.classList.remove('weeklyDisplay');
+      hourlyBtn.classList.add('activeTime');
+      hourlyBtn.classList.remove('inactiveTime');
+      weeklyBtn.classList.remove('activeTime');
+      weeklyBtn.classList.add('inactiveTime');
+    }
+  });
+
+  weeklyBtn.addEventListener('click', () => {
+    if(!domController.weeklyReport === true) {
+      timeDisplay.replaceChildren('');
+      domController.weeklyReport = true;
+      domController.hourlyReport = false;
+      displayWeeklyReport();
+      timeDisplay.classList.add('weeklyDisplay');
+      timeDisplay.classList.remove('hourlyDisplay');
+      weeklyBtn.classList.add('activeTime');
+      weeklyBtn.classList.remove('inactiveTime');
+      hourlyBtn.classList.remove('activeTime');
+      hourlyBtn.classList.add('inactiveTime');
+    }
+  })
+};
+
+(function switchUnit() {
+  let fBtn = document.querySelector('.fahrenheitBtn');
+  let cBtn = document.querySelector('.celsiusBtn');
+
+  fBtn.addEventListener('click', () => {
+    if(domController.temperatureUnit === 'C') {
+      domController.temperatureUnit = 'F';
+      cBtn.classList.remove('active');
+      cBtn.classList.add('non-active');
+      fBtn.classList.add('active');
+      fBtn.classList.remove('non-active');
+    };
+  });
+
+  cBtn.addEventListener('click', () => {
+    if(domController.temperatureUnit === 'F') {
+      domController.temperatureUnit = 'C';
+      fBtn.classList.remove('active');
+      fBtn.classList.add('non-active');
+      cBtn.classList.add('active');
+      cBtn.classList.remove('non-active');
+    };
+  });
+}());
 
 // Functions for updating UI ->
 

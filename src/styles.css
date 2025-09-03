@@ -400,29 +400,39 @@ input {
 
 .hourlyDisplay > div {
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 1px 1px 10px #ccc;
+  box-shadow: 1px 1px 10px #ebebeb;
   border: 0.5px solid #ccc;
   display: grid;
   justify-content: center;
   grid-template-rows: 1fr 1fr 1fr;
-  transition: all 0.15s ease;
 }
 
-.hourlyDisplay div p:first-child {
-  font-family: 'Inter-Medium';
+.hourlyDiv div:first-child {
   font-size: 20px;
   margin-top: 20px;
+}
+
+.timeDisplay {
+  font-family: 'Inter-Regular';
 }
 
 .hourlyDisplay div p {
   display: flex;
   justify-content: center;
-  font-family: 'Inter-Regular';
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE 10+ */
   user-select: none; /* Standard syntax */
+}
+
+.hourlyTime {
+  display: flex;
+  justify-content: center;
+}
+
+.hourlyTemp {
+  display: flex;
+  justify-content: center;
 }
 
 .timeDisplayContainer {
@@ -452,15 +462,12 @@ input {
   grid-template-rows: 1fr 1fr 2fr;
 }
 
-.weekDay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .weekDay p {
   font-family: 'Inter-Medium';
-  font-size: 1.5em;
+  font-size: 1.3em;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .weekTemp {

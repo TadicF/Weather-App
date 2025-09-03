@@ -22,11 +22,11 @@ async function submitForm() {
   let location = getLocation(data);
   let temp = getTemp(data);
   let info = getInfo(data);
-  weather.update(location, temp, info);
+  let hourly = getHourly(data);
+  let weekly = getWeekly(data);
+  weather.update(location, temp, info, hourly, weekly);
   domController.load();
-  console.log(weather.getLocation);
-  console.log(weather.getTemp);
-  console.log(weather.getInfo);
+  console.log(weather);
 };
 
 function getLocation(data) {
@@ -54,6 +54,30 @@ function getInfo(data) {
     uvIndex: data.currentConditions.uvindex,
   }
   return info;
+}
+
+function getHourly(data) {
+  let hoursArr = [];
+  for(let i = 0; i <= 23; i++) {
+    hoursArr.push(data.days[0].hours[i])
+  }
+
+  let hourly = {
+    hours: hoursArr,
+  }
+  return hourly;
+}
+
+function getWeekly(data) {
+  let weeksArr = [];
+  for(let i = 0; i < 7; i++) {
+    weeksArr.push(data.days[i]);
+  }
+
+  let weekly = {
+    weeks: weeksArr,
+  }
+  return weekly;
 }
 
 function checkLowerCase(input) {
