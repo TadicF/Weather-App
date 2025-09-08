@@ -3,8 +3,8 @@ body {
   margin: 0;
   height: 100vh;
   display: grid;
-  grid-template-rows: 1.5fr 1fr 8fr;
-  background-color: #F5F9FF;
+  grid-template-rows: 1.2fr 1fr 8fr;
+  background-color: #fcfcfc;
 }
 
 p {
@@ -14,12 +14,12 @@ p {
 /* Header styling */
 
 header {
-  background-color: #d6eaff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: #ffffff;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
   padding: 0px 30px;
-  border-bottom: 10px solid rgb(230, 241, 255);
+  border-bottom: 10px solid rgba(245, 245, 245, 0.479);
   
 }
 
@@ -28,28 +28,33 @@ header {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-self: start;
 }
 
-.gitProfile img {
-  width: 80px;
-  height: 30px;
-}
-
-.gitProfile svg, .gitProfile img {
+.gitProfile svg {
   cursor: pointer;
 }
 
+.appTitle {
+  display: flex;
+  align-items: center;
+  justify-self: center;
+}
+
 .appTitle p {
-  font-size: 2.5em;
+  font-size: 2em;
   font-family: 'Inter-Bold';
 }
 
 .tempScales {
+  justify-self: end;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 5px;
+  background-color: white;
+
 }
 
 .unitWrapper {
@@ -58,8 +63,8 @@ header {
 
 .tempScales button {
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   font-size: 20px;
   cursor: pointer;
   font-family: 'Inter-Medium';
@@ -84,6 +89,7 @@ header {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+  position: relative;
 }
 
 form {
@@ -393,7 +399,7 @@ input {
 
 .hourlyDisplay {
   display: grid;
-  grid-template-columns: repeat(24, minmax(75px, 1fr));
+  grid-template-columns: repeat(24, minmax(80px, 1fr));
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -462,7 +468,7 @@ input {
   grid-template-rows: 1fr 1fr 2fr;
 }
 
-.weekDay p {
+.weekDay {
   font-family: 'Inter-Medium';
   font-size: 1.3em;
   display: flex;

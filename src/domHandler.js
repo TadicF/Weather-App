@@ -22,6 +22,12 @@ function loadUI() {
   }
 };
 
+const weatherUI = { 
+  uvLevels: [],
+  hours: [],
+  weeks: [],
+}
+
 // Functions for creating UI
 
 function displayWeatherUI() {
@@ -67,11 +73,14 @@ function displayLocation() {
   cityDiv.appendChild(city);
   checkCityLength();
   city.textContent = weather.location.city;
-  
 
   const timezone = document.createElement('p');
   timezone.textContent = weather.location.timezone;
   timezoneDiv.appendChild(timezone);
+
+  // a reference to elements
+  weatherUI.city = city;
+  weatherUI.timezone = timezone;
 };
 
 function displayUv() {
@@ -116,6 +125,7 @@ function displayUvIndexScale() {
       const parentDiv = document.querySelector('.extremeIndexNum').appendChild(div);
       div.textContent = `${i+1}+`;
     }
+    weatherUI.uvLevels.push(div);
   }
   checkUvLevel();
   addPara('lowIndexText', 'Low');
@@ -150,6 +160,11 @@ function displayTemp() {
   dateDiv.appendChild(date);
   tempDiv.appendChild(temp);
   conditionDiv.appendChild(condition)
+
+  // reference to elements
+  weatherUI.date = date;
+  weatherUI.temp = temp;
+  weatherUI.condition = condition;
 };
 
 function displayInfo() {
@@ -172,6 +187,11 @@ function displayInfo() {
   windDiv.appendChild(wind);
   humidityDiv.appendChild(humidity);
   precipitationDiv.appendChild(precipitation);
+
+  // reference to elements
+  weatherUI.wind = wind;
+  weatherUI.humidity = humidity;
+  weatherUI.precipitation = precipitation;
 }
 
 function displayTimeReport() {
@@ -205,11 +225,14 @@ function displayHourlyReport() {
 
     hourlyTime.textContent = `${weather.hourly.hours[i].datetime.slice(0, 5)}`;
     hourlyTemp.textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
-    hourlyCondition.textContent = `[icon]`;
+    hourlyCondition.textContent = `${weather.hourly.hours[i].conditions}`;
 
     hourlyDiv.appendChild(hourlyTime);
     hourlyDiv.appendChild(hourlyTemp);
     hourlyDiv.appendChild(hourlyCondition);
+
+    // Reference
+    weatherUI.hours.push(hourlyTemp);
   }
 }
 
@@ -227,18 +250,19 @@ function displayWeeklyReport() {
     const weekCondition = createDiv(`weekCondition${i}`);
     weekCondition.classList.add('weekCondition');
 
+    const date = new Date(weather.weekly.weeks[i].datetime);
+    const day = date.getDay(); // returns a numeric value based on day of the week
+
+    weekDay.textContent = `${getWeekDay(day)}`;
+    weekTemp.textContent = `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit} - ${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`
+    weekCondition.textContent = `${weather.weekly.weeks[i].icon}`;
+    
     weeklyDiv.appendChild(weekDay);
     weeklyDiv.appendChild(weekTemp);
     weeklyDiv.appendChild(weekCondition);
 
-    const date = new Date(weather.weekly.weeks[i].datetime);
-    const day = date.getDay(); // returns a numeric value based on day of the week
-
-    addPara(`weekDay${i}`, getWeekDay(day));
-    addPara(`weekTemp${i}`, `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit}`);
-    addPara(`weekTemp${i}`, ' - ');
-    addPara(`weekTemp${i}`, `${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`);
-    addPara(`weekCondition${i}`, weather.weekly.weeks[i].icon);
+    // Reference
+    weatherUI.weeks.push({weekDay, weekTemp, weekCondition});
   }
 }
 
@@ -306,5 +330,64 @@ function switchTimeDisplay() {
 // Functions for updating UI ->
 
 function updateWeatherUI() {
+  updateLocation();
+  updateTemp();
+  updateInfo();
+  updateUvIndex();
+  updateReport();
 
+  console.log({weatherUI});
 };
+
+function updateLocation() {
+  weatherUI.city.textContent = weather.location.city;
+  checkCityLength();
+  weatherUI.timezone.textContent = weather.location.timezone;
+}
+
+function updateTemp() {
+  checkTimeDesignations();
+  weatherUI.date.textContent = `${weather.temp.dateTime.slice(0, 5)} ${domController.timeDesignation}`;
+  weatherUI.temp.textContent = `${getTemp(weather.temp.currTemp)}°${domController.temperatureUnit}`;
+  weatherUI.condition.textContent = weather.temp.condition;  
+}
+
+function updateInfo() {
+  weatherUI.wind.textContent = `Wind: ${weather.info.windSpeed}km/h`;
+  weatherUI.humidity.textContent = `Humidity: ${weather.info.humidity}%`;
+  weatherUI.precipitation.textContent = `Precipitation: ${weather.info.precipitation}%`;
+}
+
+function updateUvIndex() {
+  weatherUI.uvLevels.forEach(uv => {
+    if(uv.classList.contains('activeUv')) {
+      uv.classList.remove('activeUv');
+    }
+  })
+
+  checkUvLevel();
+}
+
+function updateReport() {
+  if(domController.hourlyReport) {
+    updateHours();
+  } else if(domController.weeklyReport) {
+    updateWeeks();
+  }
+}
+
+function updateHours() {
+  for(let i = 0; i < 23; i++) {
+    weatherUI.hours[i].textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
+  }
+}
+
+function updateWeeks() {
+  for(let i = 0; i < 7; i++) {
+    const date = new Date(weather.weekly.weeks[i].datetime);
+    const day = date.getDay(); // returns a numeric value based on day of the week
+    weatherUI.weeks[i].weekDay.textContent = `${getWeekDay(day)}`;
+    weatherUI.weeks[i].weekTemp.textContent = `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit} - ${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`;
+    weatherUI.weeks[i].weekCondition.textContent = `${weather.weekly.weeks[i].icon}`;
+  }
+}

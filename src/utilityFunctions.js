@@ -7,8 +7,10 @@ function checkCityLength() {
   const city = cityDiv.children;
   if(weather.location.city.length > 12) {
     city[0].classList.add('longText')
+    city[0].classList.remove('shortText');
   } else {
     city[0].classList.add('shortText')
+    city[0].classList.remove('longText');
   }
 };
 
