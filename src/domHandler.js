@@ -232,7 +232,7 @@ function displayHourlyReport() {
     hourlyDiv.appendChild(hourlyCondition);
 
     // Reference
-    weatherUI.hours.push(hourlyTemp);
+    weatherUI.hours[i] = hourlyTemp;
   }
 }
 
@@ -262,7 +262,7 @@ function displayWeeklyReport() {
     weeklyDiv.appendChild(weekCondition);
 
     // Reference
-    weatherUI.weeks.push({weekDay, weekTemp, weekCondition});
+    weatherUI.weeks[i] = {weekDay, weekTemp, weekCondition};
   }
 }
 
@@ -371,14 +371,17 @@ function updateUvIndex() {
 function updateReport() {
   if(domController.hourlyReport) {
     updateHours();
+    console.log('updating hours');
   } else if(domController.weeklyReport) {
     updateWeeks();
+    console.log('updating weeks');
   }
 }
 
 function updateHours() {
   for(let i = 0; i < 23; i++) {
     weatherUI.hours[i].textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
+    console.log(weatherUI.hours[i]);
   }
 }
 
