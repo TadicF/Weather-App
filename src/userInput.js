@@ -41,7 +41,7 @@ function getTemp(data) {
   let temp = {
     currTemp: data.currentConditions.temp,
     dateTime: data.currentConditions.datetime,
-    condition: data.currentConditions.conditions,
+    condition: data.currentConditions.icon,
   }
   return temp;
 }
