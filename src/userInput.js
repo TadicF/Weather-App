@@ -1,6 +1,8 @@
 import getWeatherData from "./weatherAPI";
 import { weather } from "./index.js";
 import { domController } from "./domHandler.js";
+import { prepareIcons } from "./weatherIcons.js";
+import { loadingController } from "./loadingComp.js";
 
 const userInput = {
     searchButton: document.querySelector('#searchBtn'),
@@ -17,8 +19,10 @@ const userInput = {
 
 async function submitForm() {
   event.preventDefault();
+  loadingController.show();
   const data = await getWeatherData(userInput.getValue);
-  console.log(data);
+  await prepareIcons(data);
+  loadingController.hide();
   let location = getLocation(data);
   let temp = getTemp(data);
   let info = getInfo(data);

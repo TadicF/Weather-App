@@ -23,10 +23,13 @@ function loadUI() {
   }
 };
 
-const weatherUI = { 
+export const weatherUI = { 
   uvLevels: [],
   hours: [],
   weeks: [],
+  hourlyIcons: [],
+  weeklyIcons: [],
+  dailyIcon: undefined,
 }
 
 // Functions for creating UI
@@ -136,7 +139,7 @@ function displayUvIndexScale() {
   addPara('extremeIndexText', 'Extreme');
 };
 
-async function displayTemp() {
+function displayTemp() {
   const tempContainer = document.querySelector('.tempContainer');
   const tempDateDiv = createDiv('tempDateDiv');
   tempContainer.appendChild(tempDateDiv);
@@ -159,7 +162,7 @@ async function displayTemp() {
 
   dateDiv.appendChild(date);
   tempDiv.appendChild(temp);
-  conditionDiv.innerHTML = await getWeatherIcon(weather.temp.condition);
+  conditionDiv.innerHTML = weatherUI.dailyIcon;
 
   // reference to elements
   weatherUI.date = date;
@@ -212,7 +215,7 @@ function displayTimeReport() {
   selectTimeDiv.appendChild(weeklyBtn);
 }
 
-async function displayHourlyReport() {
+function displayHourlyReport() {
   const timeDisplay = document.querySelector('.timeDisplay');
 
   for(let i = 0; i < 24; i++) {
@@ -225,7 +228,7 @@ async function displayHourlyReport() {
 
     hourlyTime.textContent = `${weather.hourly.hours[i].datetime.slice(0, 5)}`;
     hourlyTemp.textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
-    hourlyCondition.innerHTML = await getWeatherIcon(weather.hourly.hours[i].icon);
+    hourlyCondition.innerHTML = weatherUI.hourlyIcons[i];
 
     hourlyDiv.appendChild(hourlyTime);
     hourlyDiv.appendChild(hourlyTemp);
@@ -236,7 +239,7 @@ async function displayHourlyReport() {
   }
 }
 
-async function displayWeeklyReport() {
+function displayWeeklyReport() {
   const timeDisplay = document.querySelector('.timeDisplay');
 
   for(let i = 0; i < 7; i++) {
@@ -255,7 +258,7 @@ async function displayWeeklyReport() {
 
     weekDay.textContent = `${getWeekDay(day)}`;
     weekTemp.textContent = `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit} - ${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`
-    weekCondition.innerHTML = await getWeatherIcon(weather.weekly.weeks[i].icon);
+    weekCondition.innerHTML = weatherUI.weeklyIcons[i];
     
     weeklyDiv.appendChild(weekDay);
     weeklyDiv.appendChild(weekTemp);
@@ -299,7 +302,7 @@ function switchTimeDisplay() {
       hourlyBtn.classList.remove('activeTime');
       hourlyBtn.classList.add('inactiveTime');
     }
-  })
+  });
 };
 
 (function switchUnit() {
@@ -313,6 +316,10 @@ function switchTimeDisplay() {
       cBtn.classList.add('non-active');
       fBtn.classList.add('active');
       fBtn.classList.remove('non-active');
+      updateTemp();
+      if(domController.hourlyReport) {
+        updateHours();
+      } else { updateWeeks() };
     };
   });
 
@@ -323,6 +330,10 @@ function switchTimeDisplay() {
       fBtn.classList.add('non-active');
       cBtn.classList.add('active');
       cBtn.classList.remove('non-active');
+      updateTemp();
+      if(domController.hourlyReport) {
+        updateHours();
+      } else { updateWeeks() };
     };
   });
 }());
@@ -345,11 +356,11 @@ function updateLocation() {
   weatherUI.timezone.textContent = weather.location.timezone;
 }
 
-async function updateTemp() {
+function updateTemp() {
   checkTimeDesignations();
   weatherUI.date.textContent = `${weather.temp.dateTime.slice(0, 5)} ${domController.timeDesignation}`;
   weatherUI.temp.textContent = `${getTemp(weather.temp.currTemp)}°${domController.temperatureUnit}`;
-  weatherUI.condition.innerHTML = await getWeatherIcon(weather.temp.condition);
+  weatherUI.condition.innerHTML = weatherUI.dailyIcon;
 }
 
 function updateInfo() {
@@ -376,19 +387,19 @@ function updateReport() {
   }
 }
 
-async function updateHours() {
+function updateHours() {
   for(let i = 0; i < 23; i++) {
     weatherUI.hours[i].hourlyTemp.textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
-    weatherUI.hours[i].hourlyCondition.innerHTML = await getWeatherIcon(weather.hourly.hours[i].icon)
+    weatherUI.hours[i].hourlyCondition.innerHTML = weatherUI.hourlyIcons[i];
   }
 }
 
-async function updateWeeks() {
+function updateWeeks() {
   for(let i = 0; i < 7; i++) {
     const date = new Date(weather.weekly.weeks[i].datetime);
     const day = date.getDay(); // returns a numeric value based on day of the week
     weatherUI.weeks[i].weekDay.textContent = `${getWeekDay(day)}`;
     weatherUI.weeks[i].weekTemp.textContent = `${getTemp(weather.weekly.weeks[i].tempmin)}°${domController.temperatureUnit} - ${getTemp(weather.weekly.weeks[i].tempmax)}°${domController.temperatureUnit}`;
-    weatherUI.weeks[i].weekCondition.innerHTML = await getWeatherIcon(weather.weekly.weeks[i].icon);
+    weatherUI.weeks[i].weekCondition.innerHTML = weatherUI.weeklyIcons[i];
   }
 }
