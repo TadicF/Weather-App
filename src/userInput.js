@@ -30,7 +30,6 @@ async function submitForm() {
   let weekly = getWeekly(data);
   weather.update(location, temp, info, hourly, weekly);
   domController.load();
-  console.log(weather);
 };
 
 function getLocation(data) {

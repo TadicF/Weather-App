@@ -7,5 +7,3 @@ userInput.initBtn();
 
 // Create a new instance for observing weather data
 export const weather = new weatherData();
-
-// Load the UI 

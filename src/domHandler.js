@@ -1,7 +1,6 @@
 import { weather } from "./index.js";
 import { checkCityLength, createWrapper, createDiv, addPara, checkUvLevel, checkTimeDesignations, getWeekDay, getTemp } from "./utilityFunctions.js";
 import "./styles.css";
-import { getWeatherIcon } from "./weatherIcons.js";
 
 export const domController = {
   uiLoaded: false,
@@ -316,10 +315,12 @@ function switchTimeDisplay() {
       cBtn.classList.add('non-active');
       fBtn.classList.add('active');
       fBtn.classList.remove('non-active');
-      updateTemp();
-      if(domController.hourlyReport) {
+      if(domController.uiLoaded) {
+        updateTemp();
+        if(domController.hourlyReport) {
         updateHours();
-      } else { updateWeeks() };
+       } else { updateWeeks() };
+      }
     };
   });
 
@@ -330,10 +331,12 @@ function switchTimeDisplay() {
       fBtn.classList.add('non-active');
       cBtn.classList.add('active');
       cBtn.classList.remove('non-active');
+      if(domController.uiLoaded) {
       updateTemp();
       if(domController.hourlyReport) {
         updateHours();
       } else { updateWeeks() };
+     }
     };
   });
 }());
@@ -346,8 +349,6 @@ function updateWeatherUI() {
   updateInfo();
   updateUvIndex();
   updateReport();
-
-  console.log({weatherUI});
 };
 
 function updateLocation() {
@@ -388,7 +389,7 @@ function updateReport() {
 }
 
 function updateHours() {
-  for(let i = 0; i < 23; i++) {
+  for(let i = 0; i <= 23; i++) {
     weatherUI.hours[i].hourlyTemp.textContent = `${getTemp(weather.hourly.hours[i].temp)}°${domController.temperatureUnit}`;
     weatherUI.hours[i].hourlyCondition.innerHTML = weatherUI.hourlyIcons[i];
   }
